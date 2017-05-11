@@ -29,6 +29,10 @@ api_paste_config = /etc/cinder/api-paste.ini
 glance_api_servers = {{ tuple "image" "internal" "api" . | include "helm-toolkit.keystone_endpoint_uri_lookup" }}
 glance_api_version = {{ .Values.glance.version }}
 
+{{- if .Values.default_backend.enabled }}
+default_volume_type= {{ .Values.default_backend.name }}
+{{ end }}
+
 enabled_backends = {{  include "helm-toolkit.joinListWithComma" .Values.backends.enabled }}
 
 auth_strategy = keystone
@@ -63,6 +67,7 @@ rabbit_password = {{ .Values.messaging.password }}
 rabbit_ha_queues = true
 rabbit_hosts = {{ .Values.messaging.hosts }}
 
+{{- if .Values.ceph.enabled }}
 [rbd1]
 volume_driver = cinder.volume.drivers.rbd.RBDDriver
 rbd_pool = {{ .Values.backends.rbd1.pool }}
@@ -78,3 +83,16 @@ rbd_secret_uuid = {{- include "secrets/ceph-client-key" . -}}
 {{- end }}
 rbd_secret_uuid = {{ .Values.backends.rbd1.secret }}
 report_discard_supported = True
+{{- end }}
+
+{{- if .Values.scaleio.enabled }}
+[scaleio]
+volume_driver = cinder.volume.drivers.emc.scaleio.ScaleIODriver
+volume_backend_name = scaleio
+san_ip = {{ .Values.backends.scaleio.san_ip }}
+sio_protection_domain_name = {{ .Values.backends.scaleio.protection_domain_name }}
+sio_storage_pool_name = {{ .Values.backends.scaleio.storage_pool_name }}
+sio_storage_pools = {{ .Values.backends.scaleio.storage_pools }}
+san_login = {{ .Values.backends.scaleio.san_login }}
+san_password = {{ .Values.backends.scaleio.san_password }}
+{{- end }}

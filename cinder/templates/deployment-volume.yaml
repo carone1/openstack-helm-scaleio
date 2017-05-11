@@ -67,6 +67,7 @@ spec:
               mountPath: /etc/cinder/conf/cinder.conf
               subPath: cinder.conf
               readOnly: true
+{{- if .Values.ceph.enabled }}
             - name: cephconf
               mountPath: /etc/ceph/ceph.conf
               subPath: ceph.conf
@@ -75,6 +76,7 @@ spec:
               mountPath: /etc/ceph/ceph.client.{{ .Values.ceph.cinder_user }}.keyring
               subPath: ceph.client.{{ .Values.ceph.cinder_user }}.keyring
               readOnly: true
+{{ end }}
       volumes:
         - name: pod-etc-cinder
           emptyDir: {}
@@ -83,9 +85,11 @@ spec:
         - name: cinderconf
           configMap:
             name: cinder-etc
+{{- if .Values.ceph.enabled }}
         - name: cephconf
           configMap:
             name: cinder-etc
         - name: cephclientcinderkeyring
           configMap:
             name: cinder-etc
+{{ end }}

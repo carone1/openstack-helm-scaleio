@@ -78,13 +78,28 @@ ceph:
   # common/secrets/ceph-client-key
   cinder_keyring: null
 
+scaleio:
+  enabled: true
+
+default_backend:
+  enabled: true
+  name: scaleio
+
 backends:
   enabled:
   - rbd1
+  - scaleio
   rbd1:
     secret: null
     user: "admin"
     pool: "volumes"
+  scaleio:
+    san_ip: "192.168.0.45"
+    protection_domain_name: "protection_domain1"
+    storage_pool_name: "pool1"
+    storage_pools: "protection_domain1:pool1"
+    san_login: "admin"
+    san_password: "Cluster1!"
 
 glance:
   version: 2

@@ -82,7 +82,7 @@ scaleio:
   enabled: true
 
 default_backend:
-  enabled: true
+  enabled: false
   name: scaleio
 
 backends:
